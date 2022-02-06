@@ -19,7 +19,7 @@ const Card = ({ image, title, href }) => {
 							objectFit="cover"
 						/>
 					</div>
-				</div>{" "}
+				</div>
 			</a>
 		</Link>
 	);

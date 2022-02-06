@@ -5,12 +5,19 @@ import Hero from "../components/Hero";
 import styles from "../styles/Home.module.css";
 import Stores from "../stores.json";
 import { fetchCoffeeStores } from "../lib/coffee-stores";
+import { useState } from "react";
 
 export default function Home(props) {
-	console.log(props);
+	const [coordinates, setCoordinates] = useState();
 	const handleBannerClick = () => {
-		console.log("clicked");
+		navigator.geolocation.getCurrentPosition((position) => {
+			setCoordinates({
+				latitude: position.coords.latitude,
+				longitude: position.coords.longitude,
+			});
+		});
 	};
+	console.log(coordinates);
 	return (
 		<div className={styles.container}>
 			<Head>
