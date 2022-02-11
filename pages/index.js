@@ -6,18 +6,17 @@ import styles from "../styles/Home.module.css";
 import Stores from "../stores.json";
 import { fetchCoffeeStores } from "../lib/coffee-stores";
 import { useState } from "react";
+import useTrackLocation from "./hooks/use-track-location";
 
 export default function Home(props) {
+	const { handleTrackLocation, latLng, locationErrorMsg, isFindLocation } =
+		useTrackLocation();
 	const [coordinates, setCoordinates] = useState();
+	console.log({ latLng });
 	const handleBannerClick = () => {
-		navigator.geolocation.getCurrentPosition((position) => {
-			setCoordinates({
-				latitude: position.coords.latitude,
-				longitude: position.coords.longitude,
-			});
-		});
+		handleTrackLocation(latLng, locationErrorMsg);
 	};
-	console.log(coordinates);
+
 	return (
 		<div className={styles.container}>
 			<Head>
@@ -33,7 +32,7 @@ export default function Home(props) {
 			</Head>
 			<main className={styles.main}>
 				<Banner
-					buttonText="View stores nearby"
+					buttonText={isFindLocation ? "Loading..." : "View stores nearby"}
 					handleOnClick={handleBannerClick}
 				/>
 				<div className={styles.heroImage}>
