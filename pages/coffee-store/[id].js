@@ -4,18 +4,18 @@ import Stores from "../../stores.json";
 import Head from "next/head";
 import Image from "next/image";
 import styles from "../../styles/Coffe-store.module.css";
-import NearMeIcon from "@mui/icons-material/NearMe";
 import StarsIcon from "@mui/icons-material/Stars";
 import PlaceIcon from "@mui/icons-material/Place";
 import { fetchCoffeeStores } from "../../lib/coffee-stores";
 
 export async function getStaticProps({ params }) {
 	const coffeeStores = await fetchCoffeeStores();
+	const findCoffeeStores = coffeeStores.find((store) => {
+		return store.id === params.id.toString();
+	});
 	return {
 		props: {
-			CoffeeStores: coffeeStores.find((store) => {
-				return store.id === params.id.toString();
-			}),
+			CoffeeStores: findCoffeeStores ? findCoffeeStores : {},
 		},
 	};
 }
@@ -30,7 +30,7 @@ export async function getStaticPaths() {
 	});
 	return {
 		paths,
-		fallback: false,
+		fallback: true,
 	};
 }
 const CoffeeStore = (props) => {

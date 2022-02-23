@@ -3,16 +3,25 @@ import Banner from "../components/Banner";
 import Card from "../components/Card";
 import Hero from "../components/Hero";
 import styles from "../styles/Home.module.css";
-import Stores from "../stores.json";
 import { fetchCoffeeStores } from "../lib/coffee-stores";
-import { useState } from "react";
-import useTrackLocation from "./hooks/use-track-location";
+import { useEffect, useState } from "react";
+import useTrackLocation from "../hooks/use-track-location";
 
 export default function Home(props) {
+	const [coffeeStores, setCoffeeStores] = useState("");
 	const { handleTrackLocation, latLng, locationErrorMsg, isFindLocation } =
 		useTrackLocation();
-	const [coordinates, setCoordinates] = useState();
+	useEffect(async () => {
+		if (latLng) {
+			try {
+				const fetchedCoffeeStores = await fetchCoffeeStores(latLng, 30);
+				console.log({ fetchedCoffeeStores });
+				setCoffeeStores(fetchedCoffeeStores);
+			} catch (err) {}
+		}
+	}, [latLng]);
 	console.log({ latLng });
+
 	const handleBannerClick = () => {
 		handleTrackLocation(latLng, locationErrorMsg);
 	};
@@ -38,6 +47,27 @@ export default function Home(props) {
 				<div className={styles.heroImage}>
 					<Hero />
 				</div>
+				{coffeeStores.length > 0 && (
+					<>
+						<h2 className={styles.heading2}>Store near me</h2>
+						<div className={styles.cardLayout}>
+							{coffeeStores.map((store) => {
+								return (
+									<Card
+										title={store.name}
+										className={styles.card}
+										href={`/coffee-store/${store.id}`}
+										image={
+											store.imgUrl ||
+											"https://images.unsplash.com/photo-1504753793650-d4a2b783c15e?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=2000&q=80"
+										}
+										key={store.id}
+									/>
+								);
+							})}
+						</div>
+					</>
+				)}
 				<h2 className={styles.heading2}>Lahore Stores</h2>
 				<div className={styles.cardLayout}>
 					{props.Stores.map((store) => {
