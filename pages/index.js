@@ -4,19 +4,28 @@ import Card from "../components/Card";
 import Hero from "../components/Hero";
 import styles from "../styles/Home.module.css";
 import { fetchCoffeeStores } from "../lib/coffee-stores";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import useTrackLocation from "../hooks/use-track-location";
+import { ACTION_TYPE, StoreContext } from "../store/storeContext";
 
 export default function Home(props) {
-	const [coffeeStores, setCoffeeStores] = useState("");
-	const { handleTrackLocation, latLng, locationErrorMsg, isFindLocation } =
+	const {dispatch,state} = useContext(StoreContext)
+	// const [coffeeStores, setCoffeeStores] = useState("");
+	const { handleTrackLocation, locationErrorMsg, isFindLocation } =
 		useTrackLocation();
+		const {coffeeStores,latLng} = state
 	useEffect(async () => {
-		if (latLng) {
+				if (latLng) {
 			try {
 				const fetchedCoffeeStores = await fetchCoffeeStores(latLng, 30);
 				console.log({ fetchedCoffeeStores });
-				setCoffeeStores(fetchedCoffeeStores);
+				// setCoffeeStores(fetchedCoffeeStores);
+				dispatch({
+					type: ACTION_TYPE.SET_COFFEE_STORES,
+					payload:{
+						coffeeStores:fetchedCoffeeStores
+					}
+				})
 			} catch (err) {}
 		}
 	}, [latLng]);
